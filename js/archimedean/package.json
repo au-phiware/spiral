@@ -1,0 +1,71 @@
+{
+  "name": "archimedean-spiral",
+  "version": "1.0.0",
+  "description": "Draws an Archimedean spiral.",
+  "main": "dist/archimedean-spiral.js",
+  "module": "dist/archimedean-spiral.mjs",
+  "jsnext:main": "dist/archimedean-spiral.mjs",
+  "scripts": {
+    "prebuild": "eslint lib test",
+    "build": "rollup -c",
+    "watch": "rollup -c -w",
+    "pretest": "npm run build",
+    "test": "karma start",
+    "preuglify": "npm test",
+    "uglify": "cd dist && uglifyjs archimedean-spiral.js --output archimedean-spiral.min.js --source-map archimedean-spiral.min.js.map --in-source-map archimedean-spiral.js.map --compress --mangle",
+    "prepublish": "npm run uglify",
+    "prestart": "npm install",
+    "start": "ws"
+  },
+  "repository": "au-phiware/spiral",
+  "keywords": [
+    "es6",
+    "math",
+    "spiral",
+    "archimedean",
+    "fermat",
+    "lituus",
+    "hyperbolic",
+    "archimedes"
+  ],
+  "author": "Corin Lawson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/au-phiware/spiral/issues"
+  },
+  "files": [
+    "lib",
+    "dist"
+  ],
+  "homepage": "https://github.com/au-phiware/spiral#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-eslint": "^7.1.1",
+    "babel-plugin-external-helpers": "^6.18.0",
+    "babel-plugin-transform-regenerator": "^6.22.0",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-register": "^6.18.0",
+    "babelrc-rollup": "^3.0.0",
+    "d3-dsv": "^1.0.3",
+    "d3-request": "^1.0.3",
+    "d3-selection": "^1.0.3",
+    "eslint": "^3.12.2",
+    "karma": "^1.4.1",
+    "karma-coverage": "^1.1.1",
+    "karma-mocha": "^1.3.0",
+    "karma-phantomjs-launcher": "^1.0.2",
+    "karma-rollup-plugin": "^0.2.4",
+    "local-web-server": "^1.2.6",
+    "mocha": "^3.2.0",
+    "rollup": "^0.37.0",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-commonjs": "^7.0.0",
+    "rollup-plugin-istanbul": "^1.1.0",
+    "rollup-plugin-node-builtins": "^2.0.0",
+    "rollup-plugin-node-globals": "^1.1.0",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "rollup-watch": "^2.5.0",
+    "uglify-js": "^2.7.5"
+  }
+}
