@@ -1,6 +1,19 @@
 {
-  "presets": [ "es2015" ],
+  "presets": [
+    [ "env", {
+      "exclude": [
+        "transform-regenerator"
+      ],
+      "targets": {
+        "chrome": 43,
+        "firefox": 38
+      }
+    }]
+  ],
   "plugins": [
-    "transform-regenerator"
+    "syntax-async-generators",
+    "transform-exponentiation-operator",
+    "transform-async-generator-functions",
+    "fast-async"
   ]
 }

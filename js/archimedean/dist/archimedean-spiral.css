@@ -1,0 +1,78 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+
+svg#plane {
+  width: 100vmin;
+  height: 100vmin;
+}
+
+input[type="range"] {
+  width: 80vmin;
+  margin: 1vmin 2vmin;
+}
+
+input[type="checkbox"] {
+  width: 5vmin;
+}
+
+label span {
+  text-align:left;
+  width: 6vmin;
+  display: inline-block;
+}
+
+input[type="numeric"] {
+  width: 8vmin;
+  
+  height: 21px;
+  vertical-align: text-bottom;
+}
+
+#step {
+  width: 80vmin;
+}
+
+.controls {
+  text-align: center;
+}
+
+circle {
+  fill: gray;
+  r: 1.0;
+}
+
+.even circle.even {
+  fill: pink;
+  r: 1.6;
+}
+
+.odd circle.odd {
+  fill: darkseagreen;
+  r: 1.6;
+}
+
+.square circle.square {
+  fill: green;
+  r: 2.6;
+}
+
+.power2 circle.power2 {
+  fill: red;
+  r: 2.6;
+}
+
+.prime circle.prime,
+.odd.prime circle.prime,
+.hide-odd.prime circle.prime {
+  display: inherit;
+  fill: steelblue;
+  r: 2.6;
+}
+
+.hide-square circle.square { display: none; }
+.hide-even circle.even { display: none; }
+.hide-odd circle.odd { display: none; }
+.hide-power2 circle.power2 { display: none; }
+.hide-prime circle.prime { display: none; }
