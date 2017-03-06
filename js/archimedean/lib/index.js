@@ -1,4 +1,5 @@
 import "babel-polyfill";
+import load from 'dynload';
 import { isPrime } from './d3-primes';
 import { select } from 'd3-selection';
 const { PI, log10, log2, sqrt, hypot, sin, cos, floor, ceil, round, abs } = Math;
@@ -8,14 +9,13 @@ const TAU = 2 * PI;
 const PHI = (sqrt(5) - 1) / 2;
 const options = {
   frameDuration: 10,
-  squared: true,
   step: PHI,
   sect: 0,
   scale: 0,
   windingNumber: 1,
   viewBox: { left:-700, top:-700, width: 1400, height: 1400, hypot: hypot(700, 700) }
 };
-for (let pair of ((document.location.search.split('?',2)[1]||'').split('&'))) {
+for (let pair of document.location.hash.split('&')) {
   let [key, value] = pair.split('=', 2);
   if (key in options) {
     if ('number' === typeof options[key]) {
@@ -65,7 +65,7 @@ const squared = n => {
   if (upper - lower === 0) return root;
   return floor(root) + (n - lower) / (upper - lower);
 };
-const parameter = n => TAU * (options.squared ? squared(n) : n * options.step / 2);
+const parameter = n => TAU * (options.step === 0 ? squared(n) : n * options.step / 2);
 const radius = t => t ** (1 / options.windingNumber) * 10 ** options.scale;
 const angle = t => {
   let a = options.sect ** 2;
@@ -138,11 +138,11 @@ select('.controls').selectAll('input').on('change checked', function () {
   if (this.name in options) {
     options[this.name] = this.type === "checkbox" ? this.checked : +this.value;
     if (this.name === "step")
-      select('#step-text').node().value = (PI * options[this.name]).toFixed(3);
+      select('#step-text').node().value = options.step === 0 ? 'squared' : (PI * options.step).toFixed(3);
     else if (this.name === 'sect')
-      select('#sect-text').node().value = (1 / (1 + options[this.name] ** 2)).toFixed(3);
+      select('#sect-text').node().value = (1 / (1 + options.sect ** 2)).toFixed(3);
     else if (this.name === 'scale')
-      select('#scale-text').node().value = (10 ** options[this.name]).toFixed(3);
+      select('#scale-text').node().value = (10 ** options.scale).toFixed(3);
     else if (this.type === 'range')
       select(`#${this.name}-text`).node().value = options[this.name].toFixed(3);
     restart = true;
@@ -161,6 +161,8 @@ select('.controls').selectAll('input').on('change checked', function () {
     restart = true;
     if (timer === 0) timer = requestAnimationFrame(loop);
   }
+  window.location.hash = `step=${options.step === 0 ? 0 : select('#step-text').node().value}&sect=${select('#sect-text').node().value}&scale=${select('#scale-text').node().value}&windingNumber=${select('#windingNumber-text').node().value}&highlight=${encodeURIComponent(select(document.body).attr('class'))}`;
+  window.addthis.update('share', 'url', window.location.href);
 });
 
 function isInteger(j, tolerance = 8) {
@@ -179,6 +181,15 @@ function tristate() {
     select(document.body).classed(`${this.name}`, this.checked);
   }
 }
+
+window.addthis_share = {
+  url_transforms: {
+    add: {
+    }
+  }
+};
+window.addthis_config = { pubid: 'ra-58bd472cdbe0acf0' };
+load('//s7.addthis.com/js/300/addthis_widget.js#domready=1');
 
 window.options = options;
 window.app = svg;

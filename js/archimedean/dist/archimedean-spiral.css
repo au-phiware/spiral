@@ -2,6 +2,7 @@ body {
   padding: 0;
   margin: 0;
   text-align: center;
+  font-family: sans-serif;
 }
 
 svg#plane {
@@ -31,29 +32,31 @@ input[type="numeric"] {
   vertical-align: text-bottom;
 }
 
-#step {
-  width: 77vmin;
-}
-
 .controls {
   position: fixed;
-  bottom: 0;
+  bottom: 34px;
   width: 100vw;
 }
 
-.controls > div {
+.controls > div > * {
   opacity: 0;
   transition: opacity 1s;
 }
 
-.controls > div:hover {
+.controls > div:hover > *,
+.controls input[type=numeric]:focus {
   opacity: 1;
   transition: opacity 1s;
-  background-color: rgba(255,255,255,.6);
+}
+
+.controls .highlight {
+  text-align:left;
+  padding: 10px 0;
 }
 
 .controls .highlight label {
-  width: 19vmin;
+  margin-left: 2vmin;
+  width: 14vmin;
   display: inline-block;
 }
 
@@ -96,3 +99,113 @@ circle {
 .hide-odd circle.odd { display: none; }
 .hide-power2 circle.power2 { display: none; }
 .hide-prime circle.prime { display: none; }
+
+
+/* http://callmenick.com/post/various-css-input-text-styles */
+input[type="numeric"] {
+  text-align: right;
+  vertical-align: baseline;
+  display: inline-block;
+  margin: 0;
+  padding: 3px 4px 0px;
+  font-family: sans-serif;
+  /* font-size: 18px; */
+  appearance: none;
+  box-shadow: none;
+  border-radius: none;
+  border: none;
+  border-bottom: solid 2px #c9c9c9;
+  transition: border 0.3s;
+}
+input[type="numeric"]:focus {
+  outline: none;
+  border-bottom: solid 2px steelblue;
+}
+
+
+/* http://danielstern.ca/range.css */
+input[type=range] {
+  -webkit-appearance: none;
+  margin: 7.5px 0;
+}
+input[type=range]:focus {
+  outline: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 9px;
+  cursor: pointer;
+  box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.71), 0px 0px 0px rgba(255, 255, 255, 0.71);
+  background: rgba(70, 63, 85, 0.5);
+  border-radius: 25px;
+  border: 2px solid rgba(53, 40, 57, 0.38);
+}
+input[type=range]::-webkit-slider-thumb {
+  box-shadow: 1.8px 1.8px 5.9px rgba(70, 130, 180, 0.49), 0px 0px 1.8px rgba(86, 142, 189, 0.49);
+  border: 2.9px solid #3c719e;
+  height: 24px;
+  width: 24px;
+  border-radius: 12px;
+  background: #4682b4;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -9.5px;
+}
+input[type=range]:focus::-webkit-slider-runnable-track {
+  background: rgba(87, 78, 106, 0.5);
+}
+input[type=range]::-moz-range-track {
+  width: 100%;
+  height: 9px;
+  cursor: pointer;
+  box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.71), 0px 0px 0px rgba(255, 255, 255, 0.71);
+  background: rgba(70, 63, 85, 0.5);
+  border-radius: 25px;
+  border: 2px solid rgba(53, 40, 57, 0.38);
+}
+input[type=range]::-moz-range-thumb {
+  box-shadow: 1.8px 1.8px 5.9px rgba(70, 130, 180, 0.49), 0px 0px 1.8px rgba(86, 142, 189, 0.49);
+  border: 2.9px solid #3c719e;
+  height: 24px;
+  width: 24px;
+  border-radius: 12px;
+  background: #4682b4;
+  cursor: pointer;
+}
+input[type=range]::-ms-track {
+  width: 100%;
+  height: 9px;
+  cursor: pointer;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+input[type=range]::-ms-fill-lower {
+  background: rgba(53, 48, 64, 0.5);
+  border: 2px solid rgba(53, 40, 57, 0.38);
+  border-radius: 50px;
+  box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.71), 0px 0px 0px rgba(255, 255, 255, 0.71);
+}
+input[type=range]::-ms-fill-upper {
+  background: rgba(70, 63, 85, 0.5);
+  border: 2px solid rgba(53, 40, 57, 0.38);
+  border-radius: 50px;
+  box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.71), 0px 0px 0px rgba(255, 255, 255, 0.71);
+}
+input[type=range]::-ms-thumb {
+  box-shadow: 1.8px 1.8px 5.9px rgba(70, 130, 180, 0.49), 0px 0px 1.8px rgba(86, 142, 189, 0.49);
+  border: 2.9px solid #3c719e;
+  height: 24px;
+  width: 24px;
+  border-radius: 12px;
+  background: #4682b4;
+  cursor: pointer;
+  height: 9px;
+}
+input[type=range]:focus::-ms-fill-lower {
+  background: rgba(70, 63, 85, 0.5);
+}
+input[type=range]:focus::-ms-fill-upper {
+  background: rgba(87, 78, 106, 0.5);
+}
+

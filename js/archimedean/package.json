@@ -55,6 +55,7 @@
     "d3-dsv": "^1.0.3",
     "d3-request": "^1.0.3",
     "d3-selection": "^1.0.3",
+    "dynload": "^1.0.2",
     "eslint": "^3.12.2",
     "fast-async": "^6.2.1",
     "karma": "^1.4.1",
