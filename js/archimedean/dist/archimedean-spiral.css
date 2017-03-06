@@ -36,15 +36,16 @@ input[type="numeric"] {
   position: fixed;
   bottom: 34px;
   width: 100vw;
+  text-align: center;
 }
 
-.controls > div > * {
+.ready .controls > div > * {
   opacity: 0;
   transition: opacity 1s;
 }
 
-.controls > div:hover > *,
-.controls input[type=numeric]:focus {
+.ready .controls > div:hover > *,
+.ready .controls input[type=numeric]:focus {
   opacity: 1;
   transition: opacity 1s;
 }
@@ -52,6 +53,10 @@ input[type="numeric"] {
 .controls .highlight {
   text-align:left;
   padding: 10px 0;
+}
+.controls > div {
+  width: 100vmin;
+  margin: auto;
 }
 
 .controls .highlight label {

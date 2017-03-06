@@ -130,8 +130,10 @@ function loop() {
   points.call(update);
   if (limit)
     timer = requestAnimationFrame(loop);
-  else
+  else {
+    select(document.body).classed('ready', true);
     timer = 0;
+  }
 }
 
 select('.controls').selectAll('input').on('change checked', function () {
