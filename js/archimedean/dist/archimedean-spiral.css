@@ -1,6 +1,7 @@
 body {
   padding: 0;
   margin: 0;
+  text-align: center;
 }
 
 svg#plane {
@@ -14,7 +15,7 @@ input[type="range"] {
 }
 
 input[type="checkbox"] {
-  width: 5vmin;
+  width: 2vmin;
 }
 
 label span {
@@ -31,11 +32,29 @@ input[type="numeric"] {
 }
 
 #step {
-  width: 80vmin;
+  width: 77vmin;
 }
 
 .controls {
-  text-align: center;
+  position: fixed;
+  bottom: 0;
+  width: 100vw;
+}
+
+.controls > div {
+  opacity: 0;
+  transition: opacity 1s;
+}
+
+.controls > div:hover {
+  opacity: 1;
+  transition: opacity 1s;
+  background-color: rgba(255,255,255,.6);
+}
+
+.controls .highlight label {
+  width: 19vmin;
+  display: inline-block;
 }
 
 circle {
@@ -71,6 +90,7 @@ circle {
   r: 2.6;
 }
 
+.hide { display: none !important; }
 .hide-square circle.square { display: none; }
 .hide-even circle.even { display: none; }
 .hide-odd circle.odd { display: none; }

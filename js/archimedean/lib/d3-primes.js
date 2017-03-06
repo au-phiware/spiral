@@ -10,17 +10,7 @@ const primes = new Promise((done, fail) =>
     .get(done)
 );
 
-async function isPrime(n) {
-  let i = indexOf(await primes, n);
-  return i >= 0;
+export function isPrime(n) {
+  return primes.then(primes =>
+    indexOf(primes, n) >= 0);
 }
-
-export async function *generator(propertyName, g) {
-  for await (const d of g) {
-    let n = propertyName ? d[propertyName] : d;
-    d.isPrime = await isPrime(n);
-    yield d;
-  }
-}
-
-export default generator;

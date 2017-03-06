@@ -15,22 +15,33 @@
       <label><input type="checkbox" data-tristate id="square" name="square">Squares</label>
       <label><input type="checkbox" data-tristate id="power2" name="power2">Powers of 2</label>
     </div>
-    <input type="checkbox" id="squared" name="squared">
-    <input type="range" id="step" name="step"
-      step="0.001" min="0" max="6" value="2">
-    <input type="numeric" id="step-text">
-    <label><span>Pac:</span></label>
-    <input type="range" id="sect" name="sect"
-      step="0.001" min="0" max="6" value="0">
-    <input type="numeric" id="sect-text">
-    <label><span>Scale:</span></label>
-    <input type="range" id="scale" name="scale"
-      step="0.001" min="-10" max="10" value="0">
-    <input type="numeric" id="scale-text">
-    <label><span>Wind:</span></label>
-    <input type="range" id="windingNumber" name="windingNumber"
-      step="0.01" in="-5" max="5" value="1">
-    <input type="numeric" id="windingNumber-text">
+    <div class="range">
+      <label>
+        <input type="checkbox" id="squared" name="squared">
+        Step:
+      </label>
+      <input type="range" id="step" name="step"
+        step="0.001" min="0" max="6" value="2">
+      <input type="numeric" id="step-text">
+    </div>
+    <div class="range">
+      <label><span>Pac:</span></label>
+      <input type="range" id="sect" name="sect"
+        step="0.001" min="0" max="6" value="0">
+      <input type="numeric" id="sect-text">
+    </div>
+    <div class="range">
+      <label><span>Scale:</span></label>
+      <input type="range" id="scale" name="scale"
+        step="0.001" min="-10" max="10" value="0">
+      <input type="numeric" id="scale-text">
+    </div>
+    <div class="range">
+      <label><span>Wind:</span></label>
+      <input type="range" id="windingNumber" name="windingNumber"
+        step="0.01" in="-5" max="5" value="1">
+      <input type="numeric" id="windingNumber-text">
+    </div>
   </div>
   <div class="end-matter">
     <script src="dist/archimedean-spiral.js"></script>

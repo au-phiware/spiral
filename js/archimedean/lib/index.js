@@ -1,19 +1,41 @@
 import "babel-polyfill";
-import { Generator, viewbox, rectangular, limit, transform, count, archimedean, parameter } from './d3-generator';
-import findPrimes from './d3-primes';
+import { isPrime } from './d3-primes';
 import { select } from 'd3-selection';
-const { PI, log10, log2, sqrt, floor } = Math;
+const { PI, log10, log2, sqrt, hypot, sin, cos, floor, ceil, round, abs } = Math;
+const { EPSILON } = Number;
 
 const TAU = 2 * PI;
 const PHI = (sqrt(5) - 1) / 2;
 const options = {
+  frameDuration: 10,
   squared: true,
   step: PHI,
   sect: 0,
   scale: 0,
   windingNumber: 1,
-  viewBox: { left:-700, top:-700, width: 1400, height: 1400 }
+  viewBox: { left:-700, top:-700, width: 1400, height: 1400, hypot: hypot(700, 700) }
 };
+for (let pair of ((document.location.search.split('?',2)[1]||'').split('&'))) {
+  let [key, value] = pair.split('=', 2);
+  if (key in options) {
+    if ('number' === typeof options[key]) {
+      value = Number(value);
+      if (key === 'step') {
+        options[key] = value / PI;
+      } else if (key === 'sect') {
+        options[key] = sqrt(1 / value - 1);
+      } else if (key === 'scale') {
+        options[key] = log10(value);
+      } else {
+        options[key] = value;
+      }
+    } else if ('boolean' === typeof options[key]) {
+      options[key] = !(value === 'false' || Number(value) == false);
+    } else if (key === 'highlight') {
+      select(document.body).attr('class', decodeURIComponent(value));
+    }
+  }
+}
 select('.controls').selectAll('input').each(function () {
   if (this.name in options) {
     this[this.type === "checkbox" ? 'checked' : 'value'] = options[this.name];
@@ -34,51 +56,86 @@ select('#prime').each(function() {
   this.readOnly = this.indeterminate = false; this.checked = true; tristate.call(this);
 });
 
-const step = t => options.squared
-  ? TAU * sqrt((t / TAU) ** 2 + 1)
-  : t + options.step * PI;
-const spiral = () =>
-  viewbox(() => options.viewBox,
-    rectangular(
-      limit(() => ({ ordinal: 10000 }),
-        transform(d => {
-          let a = options.sect ** 2;
-          d.angle = (d.angle % TAU + a * PI) / (a + 1);
-          d.radius *= 10 ** options.scale;
-          return d;
-        },
-        findPrimes('ordinal',
-          count(
-            archimedean(() => options.windingNumber,
-              parameter(step, TAU))))))));
+const isInViewBox = (x, y) =>
+  options.viewBox.left <= x && x <= options.viewBox.left + options.viewBox.width && options.viewBox.top <= y && y <= options.viewBox.top + options.viewBox.height;
+const squared = n => {
+  let root = sqrt(n);
+  let upper = ceil(root) ** 2;
+  let lower = floor(root) ** 2;
+  if (upper - lower === 0) return root;
+  return floor(root) + (n - lower) / (upper - lower);
+};
+const parameter = n => TAU * (options.squared ? squared(n) : n * options.step / 2);
+const radius = t => t ** (1 / options.windingNumber) * 10 ** options.scale;
+const angle = t => {
+  let a = options.sect ** 2;
+  if (isInteger(t / TAU, 128)) return a * PI / (a + 1);
+  return (t % TAU + a * PI) / (a + 1);
+};
+const x = (a, r) => {
+  return r * cos(a);
+};
+const y = (a, r) => {
+  return r * sin(a);
+};
 
-const svg = new Generator(select('#plane'));
+let svg = select('#plane').attr('viewBox', `${options.viewBox.left} ${options.viewBox.top} ${options.viewBox.width} ${options.viewBox.height}`);
 
-svg.key = d => d.ordinal;
-
-svg.selectNodes = $ => $
-  .attr('viewBox', `${options.viewBox.left} ${options.viewBox.top} ${options.viewBox.width} ${options.viewBox.height}`)
-  .selectAll('circle');
-
-svg.loop = $ => {
-  $.exit().remove();
-  $.enter()
-    .append('circle')
-    .classed('square', d => isInteger(sqrt(d.ordinal)))
-    .classed('power2', d => isInteger(log2(d.ordinal)))
-    .classed('prime', d => d.isPrime)
-    .classed('odd', d => d.ordinal % 2 == 1)
-    .classed('even', d => d.ordinal % 2 == 0)
-  .merge($)
+const enter = ($) => {
+  $ = $.append('circle')
+    .attr('id', d => d.n)
+    .classed('square', d => isInteger(sqrt(d.n)))
+    .classed('power2', d => isInteger(log2(d.n)))
+    .classed('odd', d => d.n % 2 == 1)
+    .classed('even', d => d.n % 2 == 0)
     .attr('cx', d => d.x)
-    .attr('cy', d => d.y);
+    .attr('cy', d => d.y)
+    .each(function(d) {
+      isPrime(d.n).then(p => select(this).classed('prime', p));
+    });
+  return $.node();
 }
+const exit = $ => $
+  .classed('hide', true)
+const update = ($) => $
+  .classed('hide', false)
+  .attr('cx', c => c.x)
+  .attr('cy', c => c.y)
 
-let abort = svg.begin(spiral());
+let restart = false;
+let i = 1;
+let timer = requestAnimationFrame(loop);
+function loop() {
+  if (restart) {
+    exit(svg.selectAll('circle'));
+    i = 1;
+    restart = false;
+  }
+  let limit = performance.now() + options.frameDuration;
+  let data = [];
+  while (performance.now() < limit) {
+    let t = parameter(i);
+    let a = angle(t);
+    let r = radius(t);
+    let cx = x(a, r), cy = y(a, r);
+    if (isInViewBox(cx, cy)) {
+      data.push({ n: i, x: cx, y: cy });
+    }
+    i++;
+    if (i > 1000000 || hypot(cx, cy) > options.viewBox.hypot)
+      limit = 0;
+  }
+  let points = svg.selectAll('circle').data(data, d => d.n);
+  points.enter().call(enter);
+  points.call(update);
+  if (limit)
+    timer = requestAnimationFrame(loop);
+  else
+    timer = 0;
+}
 
 select('.controls').selectAll('input').on('change checked', function () {
   if (this.name in options) {
-    abort();
     options[this.name] = this.type === "checkbox" ? this.checked : +this.value;
     if (this.name === "step")
       select('#step-text').node().value = (PI * options[this.name]).toFixed(3);
@@ -88,9 +145,9 @@ select('.controls').selectAll('input').on('change checked', function () {
       select('#scale-text').node().value = (10 ** options[this.name]).toFixed(3);
     else if (this.type === 'range')
       select(`#${this.name}-text`).node().value = options[this.name].toFixed(3);
-    abort = svg.begin(spiral());
+    restart = true;
+    if (timer === 0) timer = requestAnimationFrame(loop);
   } else if (/-text$/.test(this.id)) {
-    abort();
     let name = this.id.substring(0, this.id.length - 5);
     if (name === 'step') {
       select('#step').node().value = options[name] = +this.value / PI;
@@ -101,12 +158,14 @@ select('.controls').selectAll('input').on('change checked', function () {
     } else {
       select(`#${name}`).node().value = options[name] = +this.value;
     }
-    abort = svg.begin(spiral());
+    restart = true;
+    if (timer === 0) timer = requestAnimationFrame(loop);
   }
 });
 
-function isInteger(j) {
-  return j === floor(j);
+function isInteger(j, tolerance = 8) {
+  let diff = abs(round(j) - j);
+  return diff === 0 || diff / EPSILON <= tolerance;
 }
 
 function tristate() {
@@ -123,4 +182,4 @@ function tristate() {
 
 window.options = options;
 window.app = svg;
-window.generator = spiral;
+window.loop = loop;

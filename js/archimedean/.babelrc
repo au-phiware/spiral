@@ -11,9 +11,6 @@
     }]
   ],
   "plugins": [
-    "syntax-async-generators",
-    "transform-exponentiation-operator",
-    "transform-async-generator-functions",
-    "fast-async"
+    "transform-exponentiation-operator"
   ]
 }
