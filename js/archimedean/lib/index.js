@@ -15,27 +15,6 @@ const options = {
   windingNumber: 1,
   viewBox: { left:-700, top:-700, width: 1400, height: 1400, hypot: hypot(700, 700) }
 };
-for (let pair of document.location.hash.split('&')) {
-  let [key, value] = pair.split('=', 2);
-  if (key in options) {
-    if ('number' === typeof options[key]) {
-      value = Number(value);
-      if (key === 'step') {
-        options[key] = value / PI;
-      } else if (key === 'sect') {
-        options[key] = sqrt(1 / value - 1);
-      } else if (key === 'scale') {
-        options[key] = log10(value);
-      } else {
-        options[key] = value;
-      }
-    } else if ('boolean' === typeof options[key]) {
-      options[key] = !(value === 'false' || Number(value) == false);
-    } else if (key === 'highlight') {
-      select(document.body).attr('class', decodeURIComponent(value));
-    }
-  }
-}
 select('.controls').selectAll('input').each(function () {
   if (this.name in options) {
     this[this.type === "checkbox" ? 'checked' : 'value'] = options[this.name];
@@ -52,9 +31,48 @@ select('.controls').selectAll('input').each(function () {
 select('.controls').selectAll('input[type=checkbox][data-tristate]')
   .on('click', tristate)
   .each(tristate);
-select('#prime').each(function() {
-  this.readOnly = this.indeterminate = false; this.checked = true; tristate.call(this);
-});
+let [, hash] = document.location.hash.match(/^#?(.*)$/);
+if (hash) {
+  for (let pair of hash.split('&')) {
+    let [key, value] = pair.split('=', 2);
+    if (key in options) {
+      if ('number' === typeof options[key]) {
+        value = Number(value);
+        if (key === 'step') {
+          options[key] = value / PI;
+        } else if (key === 'sect') {
+          options[key] = sqrt(1 / value - 1);
+        } else if (key === 'scale') {
+          options[key] = log10(value);
+        } else {
+          options[key] = value;
+        }
+      } else if ('boolean' === typeof options[key]) {
+        options[key] = !(value === 'false' || Number(value) == false);
+      }
+    } else if (key === 'highlight') {
+      let highlights = decodeURIComponent(value);
+      select(document.body).attr('class', highlights);
+      for (let highlight of highlights.split(/\s+/)) {
+        let [, hide, name] = highlight.match(/^(hide-)?(.+)$/);
+        let checkbox = select(`input#${name}`).node();
+        if (checkbox) {
+          checkbox.indeterminate = false;
+          checkbox.readOnly = !!hide;
+          checkbox.checked = !hide;
+          tristate.call(checkbox);
+        }
+      }
+    }
+  }
+} else {
+  let checkbox = select('#prime').node();
+  if (checkbox) {
+    checkbox.readOnly = checkbox.indeterminate = false;
+    checkbox.checked = true;
+    tristate.call(checkbox);
+  }
+}
 
 const isInViewBox = (x, y) =>
   options.viewBox.left <= x && x <= options.viewBox.left + options.viewBox.width && options.viewBox.top <= y && y <= options.viewBox.top + options.viewBox.height;
