@@ -15,46 +15,76 @@ const options = {
   windingNumber: 1,
   viewBox: { left:-700, top:-700, width: 1400, height: 1400, hypot: hypot(700, 700) }
 };
-for (let pair of document.location.hash.split('&')) {
-  let [key, value] = pair.split('=', 2);
-  if (key in options) {
-    if ('number' === typeof options[key]) {
-      value = Number(value);
-      if (key === 'step') {
-        options[key] = value / PI;
-      } else if (key === 'sect') {
-        options[key] = sqrt(1 / value - 1);
-      } else if (key === 'scale') {
-        options[key] = log10(value);
-      } else {
-        options[key] = value;
+const updateInputs = () => {
+  select('.controls').selectAll('input').each(function () {
+    if (this.name in options) {
+      if (this[this.type === "checkbox" ? 'checked' : 'value'] !== options[this.name])
+        restart = true;
+      this[this.type === "checkbox" ? 'checked' : 'value'] = options[this.name];
+      if (this.name === 'step')
+        select('#step-text').node().value = (PI * options[this.name]).toFixed(3);
+      else if (this.name === 'sect')
+        select('#sect-text').node().value = (1 / (1 + options[this.name] ** 2)).toFixed(3);
+      else if (this.name === 'scale')
+        select('#scale-text').node().value = (10 ** options[this.name]).toFixed(3);
+      else if (this.type === 'range')
+        select(`#${this.name}-text`).node().value = options[this.name].toFixed(3);
+    }
+  });
+  if (restart === true && timer === 0) timer = requestAnimationFrame(loop);
+};
+const onhashchange = () => {
+  let [, hash] = document.location.hash.match(/^#?(.*)$/);
+  if (hash) {
+    for (let pair of hash.split('&')) {
+      let [key, value] = pair.split('=', 2);
+      if (key in options) {
+        if ('number' === typeof options[key]) {
+          value = Number(value);
+          if (key === 'step') {
+            options[key] = value / PI;
+          } else if (key === 'sect') {
+            options[key] = sqrt(1 / value - 1);
+          } else if (key === 'scale') {
+            options[key] = log10(value);
+          } else {
+            options[key] = value;
+          }
+        } else if ('boolean' === typeof options[key]) {
+          options[key] = !(value === 'false' || Number(value) == false);
+        }
+      } else if (key === 'highlight') {
+        let highlights = decodeURIComponent(value);
+        select(document.body).attr('class', highlights);
+        for (let highlight of highlights.split(/\s+/)) {
+          let [, hide, name] = highlight.match(/^(hide-)?(.+)$/);
+          let checkbox = select(`input#${name}`).node();
+          if (checkbox) {
+            checkbox.indeterminate = false;
+            checkbox.readOnly = !!hide;
+            checkbox.checked = !hide;
+            tristate.call(checkbox);
+          }
+        }
       }
-    } else if ('boolean' === typeof options[key]) {
-      options[key] = !(value === 'false' || Number(value) == false);
-    } else if (key === 'highlight') {
-      select(document.body).attr('class', decodeURIComponent(value));
     }
   }
-}
-select('.controls').selectAll('input').each(function () {
-  if (this.name in options) {
-    this[this.type === "checkbox" ? 'checked' : 'value'] = options[this.name];
-    if (this.name === 'step')
-      select('#step-text').node().value = (PI * options[this.name]).toFixed(3);
-    else if (this.name === 'sect')
-      select('#sect-text').node().value = (1 / (1 + options[this.name] ** 2)).toFixed(3);
-    else if (this.name === 'scale')
-      select('#scale-text').node().value = (10 ** options[this.name]).toFixed(3);
-    else if (this.type === 'range')
-      select(`#${this.name}-text`).node().value = options[this.name].toFixed(3);
-  }
-});
+  updateInputs();
+};
 select('.controls').selectAll('input[type=checkbox][data-tristate]')
   .on('click', tristate)
   .each(tristate);
-select('#prime').each(function() {
-  this.readOnly = this.indeterminate = false; this.checked = true; tristate.call(this);
-});
+if (document.location.hash) {
+  onhashchange();
+} else {
+  updateInputs();
+  let checkbox = select('#prime').node();
+  if (checkbox) {
+    checkbox.readOnly = checkbox.indeterminate = false;
+    checkbox.checked = true;
+    tristate.call(checkbox);
+  }
+}
 
 const isInViewBox = (x, y) =>
   options.viewBox.left <= x && x <= options.viewBox.left + options.viewBox.width && options.viewBox.top <= y && y <= options.viewBox.top + options.viewBox.height;
@@ -78,20 +108,33 @@ const x = (a, r) => {
 const y = (a, r) => {
   return r * sin(a);
 };
+const circleSize = d => {
+  const body = select(document.body);
+  if ((d.isPrime && body.classed('prime')) || (d.isPower2 && body.classed('power2')) || (d.isSquare && body.classed('square'))) return 2.6;
+  if ((d.isOdd && body.classed('odd')) || (d.isEven && body.classed('even'))) return 1.6;
+  return 1.0;
+};
 
 let svg = select('#plane').attr('viewBox', `${options.viewBox.left} ${options.viewBox.top} ${options.viewBox.width} ${options.viewBox.height}`);
 
 const enter = ($) => {
   $ = $.append('circle')
     .attr('id', d => d.n)
-    .classed('square', d => isInteger(sqrt(d.n)))
-    .classed('power2', d => isInteger(log2(d.n)))
-    .classed('odd', d => d.n % 2 == 1)
-    .classed('even', d => d.n % 2 == 0)
+    .attr('r', circleSize)
+    .classed('square', d => d.isSquare)
+    .classed('power2', d => d.isPower2)
+    .classed('odd', d => d.isOdd)
+    .classed('even', d => d.isEven)
     .attr('cx', d => d.x)
     .attr('cy', d => d.y)
     .each(function(d) {
-      isPrime(d.n).then(p => select(this).classed('prime', p));
+      ('isPrime' in d ? Promise.resolve(d.isPrime) : isPrime(d.n))
+      .then(p => {
+        const circle = select(this);
+        circle.classed('prime', p);
+        d.isPrime = p;
+        if (p) circle.attr('r', circleSize);
+      });
     });
   return $.node();
 }
@@ -119,7 +162,15 @@ function loop() {
     let r = radius(t);
     let cx = x(a, r), cy = y(a, r);
     if (isInViewBox(cx, cy)) {
-      data.push({ n: i, x: cx, y: cy });
+      data.push({
+        n: i,
+        isSquare: isInteger(sqrt(i)),
+        isPower2: isInteger(log2(i)),
+        isOdd: i % 2 == 1,
+        isEven: i % 2 == 0,
+        x: cx,
+        y: cy
+      });
     }
     i++;
     if (i > 1000000 || hypot(cx, cy) > options.viewBox.hypot)
@@ -147,8 +198,6 @@ select('.controls').selectAll('input').on('change checked', function () {
       select('#scale-text').node().value = (10 ** options.scale).toFixed(3);
     else if (this.type === 'range')
       select(`#${this.name}-text`).node().value = options[this.name].toFixed(3);
-    restart = true;
-    if (timer === 0) timer = requestAnimationFrame(loop);
   } else if (/-text$/.test(this.id)) {
     let name = this.id.substring(0, this.id.length - 5);
     if (name === 'step') {
@@ -160,10 +209,14 @@ select('.controls').selectAll('input').on('change checked', function () {
     } else {
       select(`#${name}`).node().value = options[name] = +this.value;
     }
-    restart = true;
-    if (timer === 0) timer = requestAnimationFrame(loop);
+  } else {
+    return;
   }
+  restart = true;
+  if (timer === 0) timer = requestAnimationFrame(loop);
+  window.onhashchange = null;
   window.location.hash = `step=${options.step === 0 ? 0 : select('#step-text').node().value}&sect=${select('#sect-text').node().value}&scale=${select('#scale-text').node().value}&windingNumber=${select('#windingNumber-text').node().value}&highlight=${encodeURIComponent(select(document.body).attr('class'))}`;
+  window.onhashchange = onhashchange;
   window.addthis.update('share', 'url', window.location.href);
 });
 
@@ -182,6 +235,9 @@ function tristate() {
     select(document.body).classed(`hide-${this.name}`, !this.checked);
     select(document.body).classed(`${this.name}`, this.checked);
   }
+  if (svg && (this.indeterminate || this.checked)) {
+    svg.selectAll(`circle.${this.name}`).attr('r', circleSize);
+  }
 }
 
 window.addthis_share = {
@@ -196,3 +252,4 @@ load('//s7.addthis.com/js/300/addthis_widget.js#domready=1');
 window.options = options;
 window.app = svg;
 window.loop = loop;
+window.onhashchange = onhashchange;

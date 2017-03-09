@@ -1328,9 +1328,9 @@ if (!$Number(' 0o1') || !$Number('0b1') || $Number('+0x1')) {
   // ES3:
   'MAX_VALUE,MIN_VALUE,NaN,NEGATIVE_INFINITY,POSITIVE_INFINITY,' +
   // ES6 (in case, if modules with ES6 Number statics required before):
-  'EPSILON,isFinite,isInteger,isNaN,isSafeInteger,MAX_SAFE_INTEGER,' + 'MIN_SAFE_INTEGER,parseFloat,parseInt,isInteger').split(','), j = 0, key$2; keys$1.length > j; j++) {
-    if (has$7(Base, key$2 = keys$1[j]) && !has$7($Number, key$2)) {
-      dP$5($Number, key$2, gOPD$2(Base, key$2));
+  'EPSILON,isFinite,isInteger,isNaN,isSafeInteger,MAX_SAFE_INTEGER,' + 'MIN_SAFE_INTEGER,parseFloat,parseInt,isInteger').split(','), j = 0, key$1; keys$1.length > j; j++) {
+    if (has$7(Base, key$1 = keys$1[j]) && !has$7($Number, key$1)) {
+      dP$5($Number, key$1, gOPD$2(Base, key$1));
     }
   }
   $Number.prototype = proto;
@@ -5944,13 +5944,13 @@ for (var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList
   var NAME$1 = collections[i$4],
       Collection = global$15[NAME$1],
       proto$3 = Collection && Collection.prototype,
-      key$3;
+      key$2;
   if (proto$3) {
     if (!proto$3[ITERATOR$4]) hide$5(proto$3, ITERATOR$4, ArrayValues);
     if (!proto$3[TO_STRING_TAG]) hide$5(proto$3, TO_STRING_TAG, NAME$1);
     Iterators$4[NAME$1] = ArrayValues;
-    for (key$3 in $iterators) {
-      if (!proto$3[key$3]) redefine$6(proto$3, key$3, $iterators[key$3], true);
+    for (key$2 in $iterators) {
+      if (!proto$3[key$2]) redefine$6(proto$3, key$2, $iterators[key$2], true);
     }
   }
 }
@@ -8405,63 +8405,119 @@ var options = {
   windingNumber: 1,
   viewBox: { left: -700, top: -700, width: 1400, height: 1400, hypot: hypot$1(700, 700) }
 };
-var _iteratorNormalCompletion = true;
-var _didIteratorError = false;
-var _iteratorError = undefined;
+var updateInputs = function updateInputs() {
+  select('.controls').selectAll('input').each(function () {
+    if (this.name in options) {
+      if (this[this.type === "checkbox" ? 'checked' : 'value'] !== options[this.name]) restart = true;
+      this[this.type === "checkbox" ? 'checked' : 'value'] = options[this.name];
+      if (this.name === 'step') select('#step-text').node().value = (PI * options[this.name]).toFixed(3);else if (this.name === 'sect') select('#sect-text').node().value = (1 / (1 + Math.pow(options[this.name], 2))).toFixed(3);else if (this.name === 'scale') select('#scale-text').node().value = Math.pow(10, options[this.name]).toFixed(3);else if (this.type === 'range') select(`#${this.name}-text`).node().value = options[this.name].toFixed(3);
+    }
+  });
+  if (restart === true && timer === 0) timer = requestAnimationFrame(loop);
+};
+var onhashchange = function onhashchange() {
+  var _document$location$ha = document.location.hash.match(/^#?(.*)$/),
+      _document$location$ha2 = slicedToArray(_document$location$ha, 2),
+      hash = _document$location$ha2[1];
 
-try {
-  for (var _iterator = document.location.hash.split('&')[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-    var pair = _step.value;
+  if (hash) {
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
 
-    var _pair$split = pair.split('=', 2),
-        _pair$split2 = slicedToArray(_pair$split, 2),
-        key$1 = _pair$split2[0],
-        value$1 = _pair$split2[1];
+    try {
+      for (var _iterator = hash.split('&')[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var pair = _step.value;
 
-    if (key$1 in options) {
-      if ('number' === typeof options[key$1]) {
-        value$1 = Number(value$1);
-        if (key$1 === 'step') {
-          options[key$1] = value$1 / PI;
-        } else if (key$1 === 'sect') {
-          options[key$1] = sqrt(1 / value$1 - 1);
-        } else if (key$1 === 'scale') {
-          options[key$1] = log10$1(value$1);
-        } else {
-          options[key$1] = value$1;
+        var _pair$split = pair.split('=', 2),
+            _pair$split2 = slicedToArray(_pair$split, 2),
+            key = _pair$split2[0],
+            value = _pair$split2[1];
+
+        if (key in options) {
+          if ('number' === typeof options[key]) {
+            value = Number(value);
+            if (key === 'step') {
+              options[key] = value / PI;
+            } else if (key === 'sect') {
+              options[key] = sqrt(1 / value - 1);
+            } else if (key === 'scale') {
+              options[key] = log10$1(value);
+            } else {
+              options[key] = value;
+            }
+          } else if ('boolean' === typeof options[key]) {
+            options[key] = !(value === 'false' || Number(value) == false);
+          }
+        } else if (key === 'highlight') {
+          var highlights = decodeURIComponent(value);
+          select(document.body).attr('class', highlights);
+          var _iteratorNormalCompletion2 = true;
+          var _didIteratorError2 = false;
+          var _iteratorError2 = undefined;
+
+          try {
+            for (var _iterator2 = highlights.split(/\s+/)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+              var highlight = _step2.value;
+
+              var _highlight$match = highlight.match(/^(hide-)?(.+)$/),
+                  _highlight$match2 = slicedToArray(_highlight$match, 3),
+                  hide = _highlight$match2[1],
+                  name = _highlight$match2[2];
+
+              var checkbox = select(`input#${name}`).node();
+              if (checkbox) {
+                checkbox.indeterminate = false;
+                checkbox.readOnly = !!hide;
+                checkbox.checked = !hide;
+                tristate.call(checkbox);
+              }
+            }
+          } catch (err) {
+            _didIteratorError2 = true;
+            _iteratorError2 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                _iterator2.return();
+              }
+            } finally {
+              if (_didIteratorError2) {
+                throw _iteratorError2;
+              }
+            }
+          }
         }
-      } else if ('boolean' === typeof options[key$1]) {
-        options[key$1] = !(value$1 === 'false' || Number(value$1) == false);
-      } else if (key$1 === 'highlight') {
-        select(document.body).attr('class', decodeURIComponent(value$1));
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
       }
     }
   }
-} catch (err) {
-  _didIteratorError = true;
-  _iteratorError = err;
-} finally {
-  try {
-    if (!_iteratorNormalCompletion && _iterator.return) {
-      _iterator.return();
-    }
-  } finally {
-    if (_didIteratorError) {
-      throw _iteratorError;
-    }
+  updateInputs();
+};
+select('.controls').selectAll('input[type=checkbox][data-tristate]').on('click', tristate).each(tristate);
+if (document.location.hash) {
+  onhashchange();
+} else {
+  updateInputs();
+  var checkbox = select('#prime').node();
+  if (checkbox) {
+    checkbox.readOnly = checkbox.indeterminate = false;
+    checkbox.checked = true;
+    tristate.call(checkbox);
   }
 }
-
-select('.controls').selectAll('input').each(function () {
-  if (this.name in options) {
-    this[this.type === "checkbox" ? 'checked' : 'value'] = options[this.name];
-    if (this.name === 'step') select('#step-text').node().value = (PI * options[this.name]).toFixed(3);else if (this.name === 'sect') select('#sect-text').node().value = (1 / (1 + Math.pow(options[this.name], 2))).toFixed(3);else if (this.name === 'scale') select('#scale-text').node().value = Math.pow(10, options[this.name]).toFixed(3);else if (this.type === 'range') select(`#${this.name}-text`).node().value = options[this.name].toFixed(3);
-  }
-});
-select('.controls').selectAll('input[type=checkbox][data-tristate]').on('click', tristate).each(tristate);
-select('#prime').each(function () {
-  this.readOnly = this.indeterminate = false;this.checked = true;tristate.call(this);
-});
 
 var isInViewBox = function isInViewBox(x, y) {
   return options.viewBox.left <= x && x <= options.viewBox.left + options.viewBox.width && options.viewBox.top <= y && y <= options.viewBox.top + options.viewBox.height;
@@ -8490,20 +8546,26 @@ var x = function x(a, r) {
 var y = function y(a, r) {
   return r * sin(a);
 };
+var circleSize = function circleSize(d) {
+  var body = select(document.body);
+  if (d.isPrime && body.classed('prime') || d.isPower2 && body.classed('power2') || d.isSquare && body.classed('square')) return 2.6;
+  if (d.isOdd && body.classed('odd') || d.isEven && body.classed('even')) return 1.6;
+  return 1.0;
+};
 
 var svg = select('#plane').attr('viewBox', `${options.viewBox.left} ${options.viewBox.top} ${options.viewBox.width} ${options.viewBox.height}`);
 
 var enter = function enter($) {
   $ = $.append('circle').attr('id', function (d) {
     return d.n;
-  }).classed('square', function (d) {
-    return isInteger$1(sqrt(d.n));
+  }).attr('r', circleSize).classed('square', function (d) {
+    return d.isSquare;
   }).classed('power2', function (d) {
-    return isInteger$1(log2$1(d.n));
+    return d.isPower2;
   }).classed('odd', function (d) {
-    return d.n % 2 == 1;
+    return d.isOdd;
   }).classed('even', function (d) {
-    return d.n % 2 == 0;
+    return d.isEven;
   }).attr('cx', function (d) {
     return d.x;
   }).attr('cy', function (d) {
@@ -8511,8 +8573,11 @@ var enter = function enter($) {
   }).each(function (d) {
     var _this = this;
 
-    isPrime(d.n).then(function (p) {
-      return select(_this).classed('prime', p);
+    ('isPrime' in d ? Promise.resolve(d.isPrime) : isPrime(d.n)).then(function (p) {
+      var circle = select(_this);
+      circle.classed('prime', p);
+      d.isPrime = p;
+      if (p) circle.attr('r', circleSize);
     });
   });
   return $.node();
@@ -8546,7 +8611,15 @@ function loop() {
     var cx = x(a, r),
         cy = y(a, r);
     if (isInViewBox(cx, cy)) {
-      data.push({ n: i, x: cx, y: cy });
+      data.push({
+        n: i,
+        isSquare: isInteger$1(sqrt(i)),
+        isPower2: isInteger$1(log2$1(i)),
+        isOdd: i % 2 == 1,
+        isEven: i % 2 == 0,
+        x: cx,
+        y: cy
+      });
     }
     i++;
     if (i > 1000000 || hypot$1(cx, cy) > options.viewBox.hypot) limit = 0;
@@ -8566,8 +8639,6 @@ select('.controls').selectAll('input').on('change checked', function () {
   if (this.name in options) {
     options[this.name] = this.type === "checkbox" ? this.checked : +this.value;
     if (this.name === "step") select('#step-text').node().value = options.step === 0 ? 'squared' : (PI * options.step).toFixed(3);else if (this.name === 'sect') select('#sect-text').node().value = (1 / (1 + Math.pow(options.sect, 2))).toFixed(3);else if (this.name === 'scale') select('#scale-text').node().value = Math.pow(10, options.scale).toFixed(3);else if (this.type === 'range') select(`#${this.name}-text`).node().value = options[this.name].toFixed(3);
-    restart = true;
-    if (timer === 0) timer = requestAnimationFrame(loop);
   } else if (/-text$/.test(this.id)) {
     var name = this.id.substring(0, this.id.length - 5);
     if (name === 'step') {
@@ -8579,10 +8650,14 @@ select('.controls').selectAll('input').on('change checked', function () {
     } else {
       select(`#${name}`).node().value = options[name] = +this.value;
     }
-    restart = true;
-    if (timer === 0) timer = requestAnimationFrame(loop);
+  } else {
+    return;
   }
+  restart = true;
+  if (timer === 0) timer = requestAnimationFrame(loop);
+  window.onhashchange = null;
   window.location.hash = `step=${options.step === 0 ? 0 : select('#step-text').node().value}&sect=${select('#sect-text').node().value}&scale=${select('#scale-text').node().value}&windingNumber=${select('#windingNumber-text').node().value}&highlight=${encodeURIComponent(select(document.body).attr('class'))}`;
+  window.onhashchange = onhashchange;
   window.addthis.update('share', 'url', window.location.href);
 });
 
@@ -8602,6 +8677,9 @@ function tristate() {
     select(document.body).classed(`hide-${this.name}`, !this.checked);
     select(document.body).classed(`${this.name}`, this.checked);
   }
+  if (svg && (this.indeterminate || this.checked)) {
+    svg.selectAll(`circle.${this.name}`).attr('r', circleSize);
+  }
 }
 
 window.addthis_share = {
@@ -8615,6 +8693,7 @@ index$3('//s7.addthis.com/js/300/addthis_widget.js#domready=1');
 window.options = options;
 window.app = svg;
 window.loop = loop;
+window.onhashchange = onhashchange;
 
 })));
 //# sourceMappingURL=archimedean-spiral.js.map
