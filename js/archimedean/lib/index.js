@@ -15,57 +15,69 @@ const options = {
   windingNumber: 1,
   viewBox: { left:-700, top:-700, width: 1400, height: 1400, hypot: hypot(700, 700) }
 };
-select('.controls').selectAll('input').each(function () {
-  if (this.name in options) {
-    this[this.type === "checkbox" ? 'checked' : 'value'] = options[this.name];
-    if (this.name === 'step')
-      select('#step-text').node().value = (PI * options[this.name]).toFixed(3);
-    else if (this.name === 'sect')
-      select('#sect-text').node().value = (1 / (1 + options[this.name] ** 2)).toFixed(3);
-    else if (this.name === 'scale')
-      select('#scale-text').node().value = (10 ** options[this.name]).toFixed(3);
-    else if (this.type === 'range')
-      select(`#${this.name}-text`).node().value = options[this.name].toFixed(3);
-  }
-});
-select('.controls').selectAll('input[type=checkbox][data-tristate]')
-  .on('click', tristate)
-  .each(tristate);
-let [, hash] = document.location.hash.match(/^#?(.*)$/);
-if (hash) {
-  for (let pair of hash.split('&')) {
-    let [key, value] = pair.split('=', 2);
-    if (key in options) {
-      if ('number' === typeof options[key]) {
-        value = Number(value);
-        if (key === 'step') {
-          options[key] = value / PI;
-        } else if (key === 'sect') {
-          options[key] = sqrt(1 / value - 1);
-        } else if (key === 'scale') {
-          options[key] = log10(value);
-        } else {
-          options[key] = value;
+const updateInputs = () => {
+  select('.controls').selectAll('input').each(function () {
+    if (this.name in options) {
+      if (this[this.type === "checkbox" ? 'checked' : 'value'] !== options[this.name])
+        restart = true;
+      this[this.type === "checkbox" ? 'checked' : 'value'] = options[this.name];
+      if (this.name === 'step')
+        select('#step-text').node().value = (PI * options[this.name]).toFixed(3);
+      else if (this.name === 'sect')
+        select('#sect-text').node().value = (1 / (1 + options[this.name] ** 2)).toFixed(3);
+      else if (this.name === 'scale')
+        select('#scale-text').node().value = (10 ** options[this.name]).toFixed(3);
+      else if (this.type === 'range')
+        select(`#${this.name}-text`).node().value = options[this.name].toFixed(3);
+    }
+  });
+  if (restart === true && timer === 0) timer = requestAnimationFrame(loop);
+};
+const onhashchange = () => {
+  let [, hash] = document.location.hash.match(/^#?(.*)$/);
+  if (hash) {
+    for (let pair of hash.split('&')) {
+      let [key, value] = pair.split('=', 2);
+      if (key in options) {
+        if ('number' === typeof options[key]) {
+          value = Number(value);
+          if (key === 'step') {
+            options[key] = value / PI;
+          } else if (key === 'sect') {
+            options[key] = sqrt(1 / value - 1);
+          } else if (key === 'scale') {
+            options[key] = log10(value);
+          } else {
+            options[key] = value;
+          }
+        } else if ('boolean' === typeof options[key]) {
+          options[key] = !(value === 'false' || Number(value) == false);
         }
-      } else if ('boolean' === typeof options[key]) {
-        options[key] = !(value === 'false' || Number(value) == false);
-      }
-    } else if (key === 'highlight') {
-      let highlights = decodeURIComponent(value);
-      select(document.body).attr('class', highlights);
-      for (let highlight of highlights.split(/\s+/)) {
-        let [, hide, name] = highlight.match(/^(hide-)?(.+)$/);
-        let checkbox = select(`input#${name}`).node();
-        if (checkbox) {
-          checkbox.indeterminate = false;
-          checkbox.readOnly = !!hide;
-          checkbox.checked = !hide;
-          tristate.call(checkbox);
+      } else if (key === 'highlight') {
+        let highlights = decodeURIComponent(value);
+        select(document.body).attr('class', highlights);
+        for (let highlight of highlights.split(/\s+/)) {
+          let [, hide, name] = highlight.match(/^(hide-)?(.+)$/);
+          let checkbox = select(`input#${name}`).node();
+          if (checkbox) {
+            checkbox.indeterminate = false;
+            checkbox.readOnly = !!hide;
+            checkbox.checked = !hide;
+            tristate.call(checkbox);
+          }
         }
       }
     }
   }
+  updateInputs();
+};
+select('.controls').selectAll('input[type=checkbox][data-tristate]')
+  .on('click', tristate)
+  .each(tristate);
+if (document.location.hash) {
+  onhashchange();
 } else {
+  updateInputs();
   let checkbox = select('#prime').node();
   if (checkbox) {
     checkbox.readOnly = checkbox.indeterminate = false;
@@ -186,8 +198,6 @@ select('.controls').selectAll('input').on('change checked', function () {
       select('#scale-text').node().value = (10 ** options.scale).toFixed(3);
     else if (this.type === 'range')
       select(`#${this.name}-text`).node().value = options[this.name].toFixed(3);
-    restart = true;
-    if (timer === 0) timer = requestAnimationFrame(loop);
   } else if (/-text$/.test(this.id)) {
     let name = this.id.substring(0, this.id.length - 5);
     if (name === 'step') {
@@ -199,10 +209,14 @@ select('.controls').selectAll('input').on('change checked', function () {
     } else {
       select(`#${name}`).node().value = options[name] = +this.value;
     }
-    restart = true;
-    if (timer === 0) timer = requestAnimationFrame(loop);
+  } else {
+    return;
   }
+  restart = true;
+  if (timer === 0) timer = requestAnimationFrame(loop);
+  window.onhashchange = null;
   window.location.hash = `step=${options.step === 0 ? 0 : select('#step-text').node().value}&sect=${select('#sect-text').node().value}&scale=${select('#scale-text').node().value}&windingNumber=${select('#windingNumber-text').node().value}&highlight=${encodeURIComponent(select(document.body).attr('class'))}`;
+  window.onhashchange = onhashchange;
   window.addthis.update('share', 'url', window.location.href);
 });
 
@@ -238,3 +252,4 @@ load('//s7.addthis.com/js/300/addthis_widget.js#domready=1');
 window.options = options;
 window.app = svg;
 window.loop = loop;
+window.onhashchange = onhashchange;
