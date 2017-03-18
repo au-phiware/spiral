@@ -144,6 +144,7 @@ const update = ($) => $
   .classed('hide', false)
   .attr('cx', c => c.x)
   .attr('cy', c => c.y)
+const data = [];
 
 let restart = false;
 let i = 1;
@@ -155,28 +156,31 @@ function loop() {
     restart = false;
   }
   let limit = performance.now() + options.frameDuration;
-  let data = [];
+  let sample = [];
   while (performance.now() < limit) {
     let t = parameter(i);
     let a = angle(t);
     let r = radius(t);
-    let cx = x(a, r), cy = y(a, r);
-    if (isInViewBox(cx, cy)) {
-      data.push({
+    if (data.length < i) {
+      data[i - 1] = {
         n: i,
         isSquare: isInteger(sqrt(i)),
         isPower2: isInteger(log2(i)),
         isOdd: i % 2 == 1,
-        isEven: i % 2 == 0,
-        x: cx,
-        y: cy
-      });
+        isEven: i % 2 == 0
+      };
+    }
+    let d = data[i - 1];
+    d.x = x(a, r);
+    d.y = y(a, r);
+    if (isInViewBox(d.x, d.y)) {
+      sample.push(d);
     }
     i++;
-    if (i > 1000000 || hypot(cx, cy) > options.viewBox.hypot)
+    if (i > 1000000 || hypot(d.x, d.y) > options.viewBox.hypot)
       limit = 0;
   }
-  let points = svg.selectAll('circle').data(data, d => d.n);
+  let points = svg.selectAll('circle').data(sample, d => d.n);
   points.enter().call(enter);
   points.call(update);
   if (limit)

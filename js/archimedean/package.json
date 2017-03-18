@@ -1,6 +1,6 @@
 {
   "name": "archimedean-spiral",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Draws an Archimedean spiral.",
   "main": "dist/archimedean-spiral.js",
   "module": "dist/archimedean-spiral.mjs",

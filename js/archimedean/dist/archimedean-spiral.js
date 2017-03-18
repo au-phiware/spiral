@@ -33,7 +33,6 @@ var _fails = function _fails(exec) {
   }
 };
 
-// Thank's IE8 for his funny defineProperty
 var _descriptors = !_fails(function () {
   return Object.defineProperty({}, 'a', { get: function get() {
       return 7;
@@ -68,7 +67,6 @@ var _ie8DomDefine = !_descriptors && !_fails(function () {
     } }).a != 7;
 });
 
-// 7.1.1 ToPrimitive(input [, PreferredType])
 var isObject$2 = _isObject;
 // instead of the ES6 spec version, we didn't implement @@toPrimitive case
 // and the second argument - flag - preferred type is a string
@@ -165,7 +163,6 @@ var _aFunction = function _aFunction(it) {
   return it;
 };
 
-// optional / simple context binding
 var aFunction = _aFunction;
 var _ctx = function _ctx(fn, that, length) {
   aFunction(fn);
@@ -344,7 +341,6 @@ var _cof = function _cof(it) {
   return toString$1.call(it).slice(8, -1);
 };
 
-// fallback for non-array-like ES3 and non-enumerable old V8 strings
 var cof = _cof;
 var _iobject = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
   return cof(it) == 'String' ? it.split('') : Object(it);
@@ -356,7 +352,6 @@ var _defined = function _defined(it) {
   return it;
 };
 
-// to indexed object, toObject with fallback for non-array-like ES3 strings
 var IObject = _iobject;
 var defined = _defined;
 var _toIobject = function _toIobject(it) {
@@ -370,7 +365,6 @@ var _toInteger = function _toInteger(it) {
   return isNaN(it = +it) ? 0 : (it > 0 ? floor$1 : ceil$1)(it);
 };
 
-// 7.1.15 ToLength
 var toInteger = _toInteger;
 var min = Math.min;
 var _toLength = function _toLength(it) {
@@ -385,8 +379,6 @@ var _toIndex = function _toIndex(index, length) {
   return index < 0 ? max(index + length, 0) : min$1(index, length);
 };
 
-// false -> Array#indexOf
-// true  -> Array#includes
 var toIObject$3 = _toIobject;
 var toLength = _toLength;
 var toIndex = _toIndex;
@@ -438,7 +430,6 @@ var _objectKeysInternal = function _objectKeysInternal(object, names) {
 // IE 8- don't enum bug keys
 var _enumBugKeys = 'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'.split(',');
 
-// 19.1.2.14 / 15.2.3.14 Object.keys(O)
 var $keys$1 = _objectKeysInternal;
 var enumBugKeys = _enumBugKeys;
 
@@ -471,7 +462,6 @@ var _objectPie = {
 	f: f$4
 };
 
-// all enumerable object keys, includes symbols
 var getKeys$1 = _objectKeys;
 var gOPS = _objectGops;
 var pIE = _objectPie;
@@ -489,7 +479,6 @@ var _enumKeys = function _enumKeys(it) {
   }return result;
 };
 
-// 7.2.2 IsArray(argument)
 var cof$1 = _cof;
 var _isArray = Array.isArray || function isArray(arg) {
   return cof$1(arg) == 'Array';
@@ -512,7 +501,6 @@ var _objectDps = _descriptors ? Object.defineProperties : function definePropert
 
 var _html = _global.document && document.documentElement;
 
-// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
 var anObject$2 = _anObject;
 var dPs = _objectDps;
 var enumBugKeys$1 = _enumBugKeys;
@@ -555,7 +543,6 @@ var _objectCreate = Object.create || function create(O, Properties) {
   return Properties === undefined ? result : dPs(result, Properties);
 };
 
-// 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
 var $keys$2 = _objectKeysInternal;
 var hiddenKeys = _enumBugKeys.concat('length', 'prototype');
 
@@ -567,7 +554,6 @@ var _objectGopn = {
   f: f$6
 };
 
-// fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
 var toIObject$4 = _toIobject;
 var gOPN$1 = _objectGopn.f;
 var toString$2 = {}.toString;
@@ -611,7 +597,6 @@ var _objectGopd = {
   f: f$7
 };
 
-// ECMAScript 6 symbols shim
 var global$1 = _global;
 var has$1 = _has;
 var DESCRIPTORS = _descriptors;
@@ -864,7 +849,6 @@ var $export$4 = _export;
 // 19.1.2.3 / 15.2.3.7 Object.defineProperties(O, Properties)
 $export$4($export$4.S + $export$4.F * !_descriptors, 'Object', { defineProperties: _objectDps });
 
-// most Object methods by ES6 should accept primitives
 var $export$5 = _export;
 var core$2 = _core;
 var fails = _fails;
@@ -877,7 +861,6 @@ var _objectSap = function _objectSap(KEY, exec) {
   }), 'Object', exp);
 };
 
-// 19.1.2.6 Object.getOwnPropertyDescriptor(O, P)
 var toIObject$6 = _toIobject;
 var $getOwnPropertyDescriptor$1 = _objectGopd.f;
 
@@ -887,13 +870,11 @@ _objectSap('getOwnPropertyDescriptor', function () {
   };
 });
 
-// 7.1.13 ToObject(argument)
 var defined$1 = _defined;
 var _toObject = function _toObject(it) {
   return Object(defined$1(it));
 };
 
-// 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
 var has$5 = _has;
 var toObject$1 = _toObject;
 var IE_PROTO$2 = _sharedKey('IE_PROTO');
@@ -907,7 +888,6 @@ var _objectGpo = Object.getPrototypeOf || function (O) {
   }return O instanceof Object ? ObjectProto$1 : null;
 };
 
-// 19.1.2.9 Object.getPrototypeOf(O)
 var toObject = _toObject;
 var $getPrototypeOf = _objectGpo;
 
@@ -917,7 +897,6 @@ _objectSap('getPrototypeOf', function () {
   };
 });
 
-// 19.1.2.14 Object.keys(O)
 var toObject$2 = _toObject;
 var $keys$3 = _objectKeys;
 
@@ -927,12 +906,10 @@ _objectSap('keys', function () {
   };
 });
 
-// 19.1.2.7 Object.getOwnPropertyNames(O)
 _objectSap('getOwnPropertyNames', function () {
   return _objectGopnExt.f;
 });
 
-// 19.1.2.5 Object.freeze(O)
 var isObject$3 = _isObject;
 var meta = _meta.onFreeze;
 
@@ -942,7 +919,6 @@ _objectSap('freeze', function ($freeze) {
   };
 });
 
-// 19.1.2.17 Object.seal(O)
 var isObject$4 = _isObject;
 var meta$1 = _meta.onFreeze;
 
@@ -952,7 +928,6 @@ _objectSap('seal', function ($seal) {
   };
 });
 
-// 19.1.2.15 Object.preventExtensions(O)
 var isObject$5 = _isObject;
 var meta$2 = _meta.onFreeze;
 
@@ -962,7 +937,6 @@ _objectSap('preventExtensions', function ($preventExtensions) {
   };
 });
 
-// 19.1.2.12 Object.isFrozen(O)
 var isObject$6 = _isObject;
 
 _objectSap('isFrozen', function ($isFrozen) {
@@ -971,7 +945,6 @@ _objectSap('isFrozen', function ($isFrozen) {
   };
 });
 
-// 19.1.2.13 Object.isSealed(O)
 var isObject$7 = _isObject;
 
 _objectSap('isSealed', function ($isSealed) {
@@ -980,7 +953,6 @@ _objectSap('isSealed', function ($isSealed) {
   };
 });
 
-// 19.1.2.11 Object.isExtensible(O)
 var isObject$8 = _isObject;
 
 _objectSap('isExtensible', function ($isExtensible) {
@@ -989,7 +961,6 @@ _objectSap('isExtensible', function ($isExtensible) {
   };
 });
 
-// 19.1.2.1 Object.assign(target, source, ...)
 var getKeys$3 = _objectKeys;
 var gOPS$1 = _objectGops;
 var pIE$2 = _objectPie;
@@ -1027,7 +998,6 @@ var _objectAssign = !$assign || _fails(function () {
   }return T;
 } : $assign;
 
-// 19.1.3.1 Object.assign(target, source)
 var $export$6 = _export;
 
 $export$6($export$6.S + $export$6.F, 'Object', { assign: _objectAssign });
@@ -1037,12 +1007,9 @@ var _sameValue = Object.is || function is(x, y) {
   return x === y ? x !== 0 || 1 / x === 1 / y : x != x && y != y;
 };
 
-// 19.1.3.10 Object.is(value1, value2)
 var $export$7 = _export;
 $export$7($export$7.S, 'Object', { is: _sameValue });
 
-// Works with __proto__ only. Old v8 can't work with null proto objects.
-/* eslint-disable no-proto */
 var isObject$9 = _isObject;
 var anObject$4 = _anObject;
 var check = function check(O, proto) {
@@ -1068,11 +1035,9 @@ var _setProto = {
   check: check
 };
 
-// 19.1.3.19 Object.setPrototypeOf(O, proto)
 var $export$8 = _export;
 $export$8($export$8.S, 'Object', { setPrototypeOf: _setProto.set });
 
-// getting tag from 19.1.3.6 Object.prototype.toString()
 var cof$2 = _cof;
 var TAG$1 = _wks('toStringTag');
 var ARG = cof$2(function () {
@@ -1097,7 +1062,6 @@ var _classof = function _classof(it) {
   : (B = cof$2(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
 };
 
-// 19.1.3.6 Object.prototype.toString()
 var classof = _classof;
 var test = {};
 test[_wks('toStringTag')] = 'z';
@@ -1149,7 +1113,6 @@ var _bind = Function.bind || function bind(that /*, args... */) {
   return bound;
 };
 
-// 19.2.3.2 / 15.3.4.5 Function.prototype.bind(thisArg, args...)
 var $export$9 = _export;
 
 $export$9($export$9.P, 'Function', { bind: _bind });
@@ -1363,7 +1326,7 @@ var aNumberValue = _aNumberValue;
 var repeat$1 = _stringRepeat;
 var $toFixed = 1..toFixed;
 var floor$2 = Math.floor;
-var data = [0, 0, 0, 0, 0, 0];
+var data$1 = [0, 0, 0, 0, 0, 0];
 var ERROR = 'Number.toFixed: incorrect invocation!';
 var ZERO = '0';
 
@@ -1371,8 +1334,8 @@ var multiply = function multiply(n, c) {
   var i = -1,
       c2 = c;
   while (++i < 6) {
-    c2 += n * data[i];
-    data[i] = c2 % 1e7;
+    c2 += n * data$1[i];
+    data$1[i] = c2 % 1e7;
     c2 = floor$2(c2 / 1e7);
   }
 };
@@ -1380,8 +1343,8 @@ var divide = function divide(n) {
   var i = 6,
       c = 0;
   while (--i >= 0) {
-    c += data[i];
-    data[i] = floor$2(c / n);
+    c += data$1[i];
+    data$1[i] = floor$2(c / n);
     c = c % n * 1e7;
   }
 };
@@ -1389,8 +1352,8 @@ var numToString = function numToString() {
   var i = 6,
       s = '';
   while (--i >= 0) {
-    if (s !== '' || i === 0 || data[i] !== 0) {
-      var t = String(data[i]);
+    if (s !== '' || i === 0 || data$1[i] !== 0) {
+      var t = String(data$1[i]);
       s = s === '' ? t : s + repeat$1.call(ZERO, 7 - t.length) + t;
     }
   }return s;
@@ -1486,12 +1449,10 @@ $export$14($export$14.P + $export$14.F * ($fails$1(function () {
   }
 });
 
-// 20.1.2.1 Number.EPSILON
 var $export$15 = _export;
 
 $export$15($export$15.S, 'Number', { EPSILON: Math.pow(2, -52) });
 
-// 20.1.2.2 Number.isFinite(number)
 var $export$16 = _export;
 var _isFinite = _global.isFinite;
 
@@ -1501,19 +1462,16 @@ $export$16($export$16.S, 'Number', {
   }
 });
 
-// 20.1.2.3 Number.isInteger(number)
 var isObject$13 = _isObject;
 var floor$3 = Math.floor;
 var _isInteger = function isInteger(it) {
   return !isObject$13(it) && isFinite(it) && floor$3(it) === it;
 };
 
-// 20.1.2.3 Number.isInteger(number)
 var $export$17 = _export;
 
 $export$17($export$17.S, 'Number', { isInteger: _isInteger });
 
-// 20.1.2.4 Number.isNaN(number)
 var $export$18 = _export;
 
 $export$18($export$18.S, 'Number', {
@@ -1522,7 +1480,6 @@ $export$18($export$18.S, 'Number', {
   }
 });
 
-// 20.1.2.5 Number.isSafeInteger(number)
 var $export$19 = _export;
 var isInteger$2 = _isInteger;
 var abs$1 = Math.abs;
@@ -1533,12 +1490,10 @@ $export$19($export$19.S, 'Number', {
   }
 });
 
-// 20.1.2.6 Number.MAX_SAFE_INTEGER
 var $export$20 = _export;
 
 $export$20($export$20.S, 'Number', { MAX_SAFE_INTEGER: 0x1fffffffffffff });
 
-// 20.1.2.10 Number.MIN_SAFE_INTEGER
 var $export$21 = _export;
 
 $export$21($export$21.S, 'Number', { MIN_SAFE_INTEGER: -0x1fffffffffffff });
@@ -1558,7 +1513,6 @@ var _mathLog1p = Math.log1p || function log1p(x) {
   return (x = +x) > -1e-8 && x < 1e-8 ? x - x * x / 2 : Math.log(1 + x);
 };
 
-// 20.2.2.3 Math.acosh(x)
 var $export$24 = _export;
 var log1p$1 = _mathLog1p;
 var sqrt$1 = Math.sqrt;
@@ -1574,7 +1528,6 @@ $export$24($export$24.S + $export$24.F * !($acosh
   }
 });
 
-// 20.2.2.5 Math.asinh(x)
 var $export$25 = _export;
 var $asinh = Math.asinh;
 
@@ -1585,7 +1538,6 @@ function asinh(x) {
 // Tor Browser bug: Math.asinh(0) -> -0 
 $export$25($export$25.S + $export$25.F * !($asinh && 1 / $asinh(0) > 0), 'Math', { asinh: asinh });
 
-// 20.2.2.7 Math.atanh(x)
 var $export$26 = _export;
 var $atanh = Math.atanh;
 
@@ -1601,7 +1553,6 @@ var _mathSign = Math.sign || function sign(x) {
   return (x = +x) == 0 || x != x ? x : x < 0 ? -1 : 1;
 };
 
-// 20.2.2.9 Math.cbrt(x)
 var $export$27 = _export;
 var sign$1 = _mathSign;
 
@@ -1611,7 +1562,6 @@ $export$27($export$27.S, 'Math', {
   }
 });
 
-// 20.2.2.11 Math.clz32(x)
 var $export$28 = _export;
 
 $export$28($export$28.S, 'Math', {
@@ -1620,7 +1570,6 @@ $export$28($export$28.S, 'Math', {
   }
 });
 
-// 20.2.2.12 Math.cosh(x)
 var $export$29 = _export;
 var exp = Math.exp;
 
@@ -1640,13 +1589,11 @@ var _mathExpm1 = !$expm1$1
   return (x = +x) == 0 ? x : x > -1e-6 && x < 1e-6 ? x + x * x / 2 : Math.exp(x) - 1;
 } : $expm1$1;
 
-// 20.2.2.14 Math.expm1(x)
 var $export$30 = _export;
 var $expm1 = _mathExpm1;
 
 $export$30($export$30.S + $export$30.F * ($expm1 != Math.expm1), 'Math', { expm1: $expm1 });
 
-// 20.2.2.16 Math.fround(x)
 var $export$31 = _export;
 var sign$2 = _mathSign;
 var pow$1 = Math.pow;
@@ -1673,7 +1620,6 @@ $export$31($export$31.S, 'Math', {
   }
 });
 
-// 20.2.2.17 Math.hypot([value1[, value2[, … ]]])
 var $export$32 = _export;
 var abs$2 = Math.abs;
 
@@ -1701,7 +1647,6 @@ $export$32($export$32.S, 'Math', {
   }
 });
 
-// 20.2.2.18 Math.imul(x, y)
 var $export$33 = _export;
 var $imul = Math.imul;
 
@@ -1719,7 +1664,6 @@ $export$33($export$33.S + $export$33.F * _fails(function () {
   }
 });
 
-// 20.2.2.21 Math.log10(x)
 var $export$34 = _export;
 
 $export$34($export$34.S, 'Math', {
@@ -1728,12 +1672,10 @@ $export$34($export$34.S, 'Math', {
   }
 });
 
-// 20.2.2.20 Math.log1p(x)
 var $export$35 = _export;
 
 $export$35($export$35.S, 'Math', { log1p: _mathLog1p });
 
-// 20.2.2.22 Math.log2(x)
 var $export$36 = _export;
 
 $export$36($export$36.S, 'Math', {
@@ -1742,12 +1684,10 @@ $export$36($export$36.S, 'Math', {
   }
 });
 
-// 20.2.2.28 Math.sign(x)
 var $export$37 = _export;
 
 $export$37($export$37.S, 'Math', { sign: _mathSign });
 
-// 20.2.2.30 Math.sinh(x)
 var $export$38 = _export;
 var expm1$1 = _mathExpm1;
 var exp$1 = Math.exp;
@@ -1761,7 +1701,6 @@ $export$38($export$38.S + $export$38.F * _fails(function () {
   }
 });
 
-// 20.2.2.33 Math.tanh(x)
 var $export$39 = _export;
 var expm1$2 = _mathExpm1;
 var exp$2 = Math.exp;
@@ -1774,7 +1713,6 @@ $export$39($export$39.S, 'Math', {
   }
 });
 
-// 20.2.2.34 Math.trunc(x)
 var $export$40 = _export;
 
 $export$40($export$40.S, 'Math', {
@@ -1824,7 +1762,6 @@ $export$42($export$42.S, 'String', {
   }
 });
 
-// 21.1.3.25 String.prototype.trim()
 _stringTrim('trim', function ($trim) {
   return function trim() {
     return $trim(this, 3);
@@ -1975,7 +1912,6 @@ $export$44($export$44.P, 'String', {
   }
 });
 
-// 7.2.8 IsRegExp(argument)
 var isObject$14 = _isObject;
 var cof$5 = _cof;
 var MATCH = _wks('match');
@@ -1984,7 +1920,6 @@ var _isRegexp = function _isRegexp(it) {
   return isObject$14(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : cof$5(it) == 'RegExp');
 };
 
-// helper for String#{startsWith, endsWith, includes}
 var isRegExp = _isRegexp;
 var defined$5 = _defined;
 
@@ -2075,98 +2010,84 @@ var _stringHtml = function _stringHtml(NAME, exec) {
   }), 'String', O);
 };
 
-// B.2.3.2 String.prototype.anchor(name)
 _stringHtml('anchor', function (createHTML) {
   return function anchor(name) {
     return createHTML(this, 'a', 'name', name);
   };
 });
 
-// B.2.3.3 String.prototype.big()
 _stringHtml('big', function (createHTML) {
   return function big() {
     return createHTML(this, 'big', '', '');
   };
 });
 
-// B.2.3.4 String.prototype.blink()
 _stringHtml('blink', function (createHTML) {
   return function blink() {
     return createHTML(this, 'blink', '', '');
   };
 });
 
-// B.2.3.5 String.prototype.bold()
 _stringHtml('bold', function (createHTML) {
   return function bold() {
     return createHTML(this, 'b', '', '');
   };
 });
 
-// B.2.3.6 String.prototype.fixed()
 _stringHtml('fixed', function (createHTML) {
   return function fixed() {
     return createHTML(this, 'tt', '', '');
   };
 });
 
-// B.2.3.7 String.prototype.fontcolor(color)
 _stringHtml('fontcolor', function (createHTML) {
   return function fontcolor(color) {
     return createHTML(this, 'font', 'color', color);
   };
 });
 
-// B.2.3.8 String.prototype.fontsize(size)
 _stringHtml('fontsize', function (createHTML) {
   return function fontsize(size) {
     return createHTML(this, 'font', 'size', size);
   };
 });
 
-// B.2.3.9 String.prototype.italics()
 _stringHtml('italics', function (createHTML) {
   return function italics() {
     return createHTML(this, 'i', '', '');
   };
 });
 
-// B.2.3.10 String.prototype.link(url)
 _stringHtml('link', function (createHTML) {
   return function link(url) {
     return createHTML(this, 'a', 'href', url);
   };
 });
 
-// B.2.3.11 String.prototype.small()
 _stringHtml('small', function (createHTML) {
   return function small() {
     return createHTML(this, 'small', '', '');
   };
 });
 
-// B.2.3.12 String.prototype.strike()
 _stringHtml('strike', function (createHTML) {
   return function strike() {
     return createHTML(this, 'strike', '', '');
   };
 });
 
-// B.2.3.13 String.prototype.sub()
 _stringHtml('sub', function (createHTML) {
   return function sub() {
     return createHTML(this, 'sub', '', '');
   };
 });
 
-// B.2.3.14 String.prototype.sup()
 _stringHtml('sup', function (createHTML) {
   return function sup() {
     return createHTML(this, 'sup', '', '');
   };
 });
 
-// 20.3.3.1 / 15.9.4.4 Date.now()
 var $export$50 = _export;
 
 $export$50($export$50.S, 'Date', { now: function now() {
@@ -2189,7 +2110,6 @@ $export$51($export$51.P + $export$51.F * _fails(function () {
   }
 });
 
-// 20.3.4.36 / 15.9.5.43 Date.prototype.toISOString()
 var $export$52 = _export;
 var fails$4 = _fails;
 var getTime = Date.prototype.getTime;
@@ -2240,12 +2160,10 @@ var proto$1 = Date.prototype;
 
 if (!(TO_PRIMITIVE$1 in proto$1)) _hide(proto$1, TO_PRIMITIVE$1, _dateToPrimitive);
 
-// 22.1.2.2 / 15.4.3.2 Array.isArray(arg)
 var $export$53 = _export;
 
 $export$53($export$53.S, 'Array', { isArray: _isArray });
 
-// call something on iterator step with safe closing on error
 var anObject$6 = _anObject;
 var _iterCall = function _iterCall(iterator, fn, value, entries) {
   try {
@@ -2258,7 +2176,6 @@ var _iterCall = function _iterCall(iterator, fn, value, entries) {
   }
 };
 
-// check on default Array iterator
 var Iterators$1 = _iterators;
 var ITERATOR$1 = _wks('iterator');
 var ArrayProto = Array.prototype;
@@ -2381,7 +2298,6 @@ var _strictMethod = function _strictMethod(method, arg) {
   });
 };
 
-// 22.1.3.13 Array.prototype.join(separator)
 var $export$56 = _export;
 var toIObject$8 = _toIobject;
 var arrayJoin = [].join;
@@ -2458,20 +2374,12 @@ var _arraySpeciesConstructor = function _arraySpeciesConstructor(original) {
   }return C === undefined ? Array : C;
 };
 
-// 9.4.2.3 ArraySpeciesCreate(originalArray, length)
 var speciesConstructor = _arraySpeciesConstructor;
 
 var _arraySpeciesCreate = function _arraySpeciesCreate(original, length) {
   return new (speciesConstructor(original))(length);
 };
 
-// 0 -> Array#forEach
-// 1 -> Array#map
-// 2 -> Array#filter
-// 3 -> Array#some
-// 4 -> Array#every
-// 5 -> Array#find
-// 6 -> Array#findIndex
 var ctx$2 = _ctx;
 var IObject$2 = _iobject;
 var toObject$7 = _toObject;
@@ -2678,7 +2586,6 @@ var _arrayCopyWithin = [].copyWithin || function copyWithin(target /*= 0*/, star
   }return O;
 };
 
-// 22.1.3.31 Array.prototype[@@unscopables]
 var UNSCOPABLES = _wks('unscopables');
 var ArrayProto$1 = Array.prototype;
 if (ArrayProto$1[UNSCOPABLES] == undefined) _hide(ArrayProto$1, UNSCOPABLES, {});
@@ -2686,7 +2593,6 @@ var _addToUnscopables = function _addToUnscopables(key) {
   ArrayProto$1[UNSCOPABLES][key] = true;
 };
 
-// 22.1.3.3 Array.prototype.copyWithin(target, start, end = this.length)
 var $export$68 = _export;
 
 $export$68($export$68.P, 'Array', { copyWithin: _arrayCopyWithin });
@@ -2708,14 +2614,12 @@ var _arrayFill = function fill(value /*, start = 0, end = @length */) {
   }return O;
 };
 
-// 22.1.3.6 Array.prototype.fill(value, start = 0, end = this.length)
 var $export$69 = _export;
 
 $export$69($export$69.P, 'Array', { fill: _arrayFill });
 
 _addToUnscopables('fill');
 
-// 22.1.3.8 Array.prototype.find(predicate, thisArg = undefined)
 var $export$70 = _export;
 var $find = _arrayMethods(5);
 var KEY = 'find';
@@ -2731,7 +2635,6 @@ $export$70($export$70.P + $export$70.F * forced, 'Array', {
 });
 _addToUnscopables(KEY);
 
-// 22.1.3.9 Array.prototype.findIndex(predicate, thisArg = undefined)
 var $export$71 = _export;
 var $find$1 = _arrayMethods(6);
 var KEY$1 = 'findIndex';
@@ -2802,7 +2705,6 @@ addToUnscopables('keys');
 addToUnscopables('values');
 addToUnscopables('entries');
 
-// 21.2.5.3 get RegExp.prototype.flags
 var anObject$7 = _anObject;
 var _flags = function _flags() {
   var that = anObject$7(this),
@@ -2859,7 +2761,6 @@ if (_descriptors && (!CORRECT_NEW || _fails(function () {
 
 _setSpecies('RegExp');
 
-// 21.2.5.3 get RegExp.prototype.flags()
 if (_descriptors && /./g.flags != 'g') _objectDp.f(RegExp.prototype, 'flags', {
   configurable: true,
   get: _flags
@@ -2923,7 +2824,6 @@ var _fixReWks = function _fixReWks(KEY, length, exec) {
   }
 };
 
-// @@match logic
 _fixReWks('match', 1, function (defined, MATCH, $match) {
   // 21.1.3.11 String.prototype.match(regexp)
   return [function match(regexp) {
@@ -2935,7 +2835,6 @@ _fixReWks('match', 1, function (defined, MATCH, $match) {
   }, $match];
 });
 
-// @@replace logic
 _fixReWks('replace', 2, function (defined, REPLACE, $replace) {
   // 21.1.3.14 String.prototype.replace(searchValue, replaceValue)
   return [function replace(searchValue, replaceValue) {
@@ -2947,7 +2846,6 @@ _fixReWks('replace', 2, function (defined, REPLACE, $replace) {
   }, $replace];
 });
 
-// @@search logic
 _fixReWks('search', 1, function (defined, SEARCH, $search) {
   // 21.1.3.15 String.prototype.search(regexp)
   return [function search(regexp) {
@@ -2959,7 +2857,6 @@ _fixReWks('search', 1, function (defined, SEARCH, $search) {
   }, $search];
 });
 
-// @@split logic
 _fixReWks('split', 2, function (defined, SPLIT, $split) {
   'use strict';
 
@@ -3062,7 +2959,6 @@ var _forOf = createCommonjsModule(function (module) {
   exports.RETURN = RETURN;
 });
 
-// 7.3.20 SpeciesConstructor(O, defaultConstructor)
 var anObject$9 = _anObject;
 var aFunction$5 = _aFunction;
 var SPECIES$2 = _wks('species');
@@ -4867,7 +4763,6 @@ _typedArray('Float64', 8, function (init) {
   };
 });
 
-// 26.1.1 Reflect.apply(target, thisArgument, argumentsList)
 var $export$76 = _export;
 var aFunction$6 = _aFunction;
 var anObject$12 = _anObject;
@@ -4884,7 +4779,6 @@ $export$76($export$76.S + $export$76.F * !_fails(function () {
   }
 });
 
-// 26.1.2 Reflect.construct(target, argumentsList [, newTarget])
 var $export$77 = _export;
 var create$3 = _objectCreate;
 var aFunction$7 = _aFunction;
@@ -4937,7 +4831,6 @@ $export$77($export$77.S + $export$77.F * (NEW_TARGET_BUG || ARGS_BUG), 'Reflect'
   }
 });
 
-// 26.1.3 Reflect.defineProperty(target, propertyKey, attributes)
 var dP$9 = _objectDp;
 var $export$78 = _export;
 var anObject$14 = _anObject;
@@ -4960,7 +4853,6 @@ $export$78($export$78.S + $export$78.F * _fails(function () {
   }
 });
 
-// 26.1.4 Reflect.deleteProperty(target, propertyKey)
 var $export$79 = _export;
 var gOPD$3 = _objectGopd.f;
 var anObject$15 = _anObject;
@@ -4972,7 +4864,6 @@ $export$79($export$79.S, 'Reflect', {
   }
 });
 
-// 26.1.5 Reflect.enumerate(target)
 var $export$80 = _export;
 var anObject$16 = _anObject;
 var Enumerate = function Enumerate(iterated) {
@@ -5001,7 +4892,6 @@ $export$80($export$80.S, 'Reflect', {
   }
 });
 
-// 26.1.6 Reflect.get(target, propertyKey [, receiver])
 var gOPD$4 = _objectGopd;
 var getPrototypeOf$3 = _objectGpo;
 var has$9 = _has;
@@ -5020,7 +4910,6 @@ function get$1(target, propertyKey /*, receiver*/) {
 
 $export$81($export$81.S, 'Reflect', { get: get$1 });
 
-// 26.1.7 Reflect.getOwnPropertyDescriptor(target, propertyKey)
 var gOPD$5 = _objectGopd;
 var $export$82 = _export;
 var anObject$18 = _anObject;
@@ -5031,7 +4920,6 @@ $export$82($export$82.S, 'Reflect', {
   }
 });
 
-// 26.1.8 Reflect.getPrototypeOf(target)
 var $export$83 = _export;
 var getProto = _objectGpo;
 var anObject$19 = _anObject;
@@ -5042,7 +4930,6 @@ $export$83($export$83.S, 'Reflect', {
   }
 });
 
-// 26.1.9 Reflect.has(target, propertyKey)
 var $export$84 = _export;
 
 $export$84($export$84.S, 'Reflect', {
@@ -5051,7 +4938,6 @@ $export$84($export$84.S, 'Reflect', {
   }
 });
 
-// 26.1.10 Reflect.isExtensible(target)
 var $export$85 = _export;
 var anObject$20 = _anObject;
 var $isExtensible = Object.isExtensible;
@@ -5063,7 +4949,6 @@ $export$85($export$85.S, 'Reflect', {
   }
 });
 
-// all object keys, includes non-enumerable and symbols
 var gOPN$4 = _objectGopn;
 var gOPS$2 = _objectGops;
 var anObject$21 = _anObject;
@@ -5074,12 +4959,10 @@ var _ownKeys = Reflect$1 && Reflect$1.ownKeys || function ownKeys(it) {
   return getSymbols ? keys.concat(getSymbols(it)) : keys;
 };
 
-// 26.1.11 Reflect.ownKeys(target)
 var $export$86 = _export;
 
 $export$86($export$86.S, 'Reflect', { ownKeys: _ownKeys });
 
-// 26.1.12 Reflect.preventExtensions(target)
 var $export$87 = _export;
 var anObject$22 = _anObject;
 var $preventExtensions = Object.preventExtensions;
@@ -5096,7 +4979,6 @@ $export$87($export$87.S, 'Reflect', {
   }
 });
 
-// 26.1.13 Reflect.set(target, propertyKey, V [, receiver])
 var dP$10 = _objectDp;
 var gOPD$6 = _objectGopd;
 var getPrototypeOf$4 = _objectGpo;
@@ -5129,7 +5011,6 @@ function set$1(target, propertyKey, V /*, receiver*/) {
 
 $export$88($export$88.S, 'Reflect', { set: set$1 });
 
-// 26.1.14 Reflect.setPrototypeOf(target, proto)
 var $export$89 = _export;
 var setProto = _setProto;
 
@@ -5145,7 +5026,6 @@ if (setProto) $export$89($export$89.S, 'Reflect', {
   }
 });
 
-// https://github.com/tc39/Array.prototype.includes
 var $export$90 = _export;
 var $includes = _arrayIncludes(true);
 
@@ -5157,7 +5037,6 @@ $export$90($export$90.P, 'Array', {
 
 _addToUnscopables('includes');
 
-// https://github.com/mathiasbynens/String.prototype.at
 var $export$91 = _export;
 var $at$2 = _stringAt(true);
 
@@ -5167,7 +5046,6 @@ $export$91($export$91.P, 'String', {
   }
 });
 
-// https://github.com/tc39/proposal-string-pad-start-end
 var toLength$12 = _toLength;
 var repeat$2 = _stringRepeat;
 var defined$9 = _defined;
@@ -5184,7 +5062,6 @@ var _stringPad = function _stringPad(that, maxLength, fillString, left) {
   return left ? stringFiller + S : S + stringFiller;
 };
 
-// https://github.com/tc39/proposal-string-pad-start-end
 var $export$92 = _export;
 var $pad = _stringPad;
 
@@ -5194,7 +5071,6 @@ $export$92($export$92.P, 'String', {
   }
 });
 
-// https://github.com/tc39/proposal-string-pad-start-end
 var $export$93 = _export;
 var $pad$1 = _stringPad;
 
@@ -5204,21 +5080,18 @@ $export$93($export$93.P, 'String', {
   }
 });
 
-// https://github.com/sebmarkbage/ecmascript-string-left-right-trim
 _stringTrim('trimLeft', function ($trim) {
   return function trimLeft() {
     return $trim(this, 1);
   };
 }, 'trimStart');
 
-// https://github.com/sebmarkbage/ecmascript-string-left-right-trim
 _stringTrim('trimRight', function ($trim) {
   return function trimRight() {
     return $trim(this, 2);
   };
 }, 'trimEnd');
 
-// https://tc39.github.io/String.prototype.matchAll/
 var $export$94 = _export;
 var defined$10 = _defined;
 var toLength$13 = _toLength;
@@ -5252,7 +5125,6 @@ _wksDefine('asyncIterator');
 
 _wksDefine('observable');
 
-// https://github.com/tc39/proposal-object-getownpropertydescriptors
 var $export$95 = _export;
 var ownKeys$1 = _ownKeys;
 var toIObject$11 = _toIobject;
@@ -5292,7 +5164,6 @@ var _objectToArray = function _objectToArray(isEntries) {
   };
 };
 
-// https://github.com/tc39/proposal-object-values-entries
 var $export$96 = _export;
 var $values = _objectToArray(false);
 
@@ -5302,7 +5173,6 @@ $export$96($export$96.S, 'Object', {
   }
 });
 
-// https://github.com/tc39/proposal-object-values-entries
 var $export$97 = _export;
 var $entries = _objectToArray(true);
 
@@ -5312,7 +5182,6 @@ $export$97($export$97.S, 'Object', {
   }
 });
 
-// Forced replacement prototype accessors methods
 var _objectForcedPam = _library || !_fails(function () {
   var K = Math.random();
   // In FF throws only define methods
@@ -5388,7 +5257,6 @@ var _arrayFromIterable = function _arrayFromIterable(iter, ITERATOR) {
   return result;
 };
 
-// https://github.com/DavidBruant/Map-Set.prototype.toJSON
 var classof$3 = _classof;
 var from$1 = _arrayFromIterable;
 var _collectionToJson = function _collectionToJson(NAME) {
@@ -5398,22 +5266,18 @@ var _collectionToJson = function _collectionToJson(NAME) {
   };
 };
 
-// https://github.com/DavidBruant/Map-Set.prototype.toJSON
 var $export$102 = _export;
 
 $export$102($export$102.P + $export$102.R, 'Map', { toJSON: _collectionToJson('Map') });
 
-// https://github.com/DavidBruant/Map-Set.prototype.toJSON
 var $export$103 = _export;
 
 $export$103($export$103.P + $export$103.R, 'Set', { toJSON: _collectionToJson('Set') });
 
-// https://github.com/ljharb/proposal-global
 var $export$104 = _export;
 
 $export$104($export$104.S, 'System', { global: _global });
 
-// https://github.com/ljharb/proposal-is-error
 var $export$105 = _export;
 var cof$7 = _cof;
 
@@ -5423,7 +5287,6 @@ $export$105($export$105.S, 'Error', {
   }
 });
 
-// https://gist.github.com/BrendanEich/4294d5c212a6d2254703
 var $export$106 = _export;
 
 $export$106($export$106.S, 'Math', {
@@ -5435,7 +5298,6 @@ $export$106($export$106.S, 'Math', {
   }
 });
 
-// https://gist.github.com/BrendanEich/4294d5c212a6d2254703
 var $export$107 = _export;
 
 $export$107($export$107.S, 'Math', {
@@ -5447,7 +5309,6 @@ $export$107($export$107.S, 'Math', {
   }
 });
 
-// https://gist.github.com/BrendanEich/4294d5c212a6d2254703
 var $export$108 = _export;
 
 $export$108($export$108.S, 'Math', {
@@ -5464,7 +5325,6 @@ $export$108($export$108.S, 'Math', {
   }
 });
 
-// https://gist.github.com/BrendanEich/4294d5c212a6d2254703
 var $export$109 = _export;
 
 $export$109($export$109.S, 'Math', {
@@ -5654,7 +5514,6 @@ metadata$8.exp({ metadata: function metadata$8(metadataKey, metadataValue) {
     };
   } });
 
-// https://github.com/rwaldron/tc39-notes/blob/master/es6/2014-09/sept-25.md#510-globalasap-for-enqueuing-a-microtask
 var $export$111 = _export;
 var microtask$1 = _microtask();
 var process$4 = _global.process;
@@ -5667,7 +5526,6 @@ $export$111($export$111.G, {
   }
 });
 
-// https://github.com/zenparsing/es-observable
 var $export$112 = _export;
 var global$13 = _global;
 var core$3 = _core;
@@ -5906,7 +5764,6 @@ var _partial = function _partial() /* ...pargs */{
   };
 };
 
-// ie9- setTimeout & setInterval additional parameters fix
 var global$14 = _global;
 var $export$113 = _export;
 var invoke$3 = _invoke;
@@ -6656,7 +6513,6 @@ var _replacer = function _replacer(regExp, replace) {
   };
 };
 
-// https://github.com/benjamingr/RexExp.escape
 var $export$115 = _export;
 var $re = _replacer(/[\\^$*+?.()|[\]{}]/g, '\\$&');
 
@@ -8592,6 +8448,7 @@ var update = function update($) {
     return c.y;
   });
 };
+var data = [];
 
 var restart = false;
 var i = 1;
@@ -8603,28 +8460,30 @@ function loop() {
     restart = false;
   }
   var limit = performance.now() + options.frameDuration;
-  var data = [];
+  var sample = [];
   while (performance.now() < limit) {
     var t = parameter(i);
     var a = angle(t);
     var r = radius(t);
-    var cx = x(a, r),
-        cy = y(a, r);
-    if (isInViewBox(cx, cy)) {
-      data.push({
+    if (data.length < i) {
+      data[i - 1] = {
         n: i,
         isSquare: isInteger$1(sqrt(i)),
         isPower2: isInteger$1(log2$1(i)),
         isOdd: i % 2 == 1,
-        isEven: i % 2 == 0,
-        x: cx,
-        y: cy
-      });
+        isEven: i % 2 == 0
+      };
+    }
+    var d = data[i - 1];
+    d.x = x(a, r);
+    d.y = y(a, r);
+    if (isInViewBox(d.x, d.y)) {
+      sample.push(d);
     }
     i++;
-    if (i > 1000000 || hypot$1(cx, cy) > options.viewBox.hypot) limit = 0;
+    if (i > 1000000 || hypot$1(d.x, d.y) > options.viewBox.hypot) limit = 0;
   }
-  var points = svg.selectAll('circle').data(data, function (d) {
+  var points = svg.selectAll('circle').data(sample, function (d) {
     return d.n;
   });
   points.enter().call(enter);
